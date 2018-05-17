@@ -72,24 +72,12 @@ def home(request):
     user_grant = get_user_grant(request)
     if user_grant == "user":
         return render(request, 'home.html',{'extend': 'userIndex.html'})
-    elif user_grant == "admin":
-        login_user=request.session.get('login_user',None)
-        admin_id = userInf.objects.filter(user_name=login_user).first()
-        items = phonesInf.objects.filter(admin_id=admin_id)
-        return render(request, 'admin_phones.html',{'extend': 'adminIndex.html', 'items':items})
     else:
         return redirect('/index/home/')
 
 def index_home(request):
     return render(request, 'home.html',{'extend': 'index.html'})
 
-'''
-def redirect_to_user_home(request):
-    return render(request, 'home.html',{'extend': 'userIndex.html'})
-
-def redirect_to_admin_home(request):
-    return render(request, 'admin_phones.html',{'extend': 'adminIndex.html'})
-'''
 def about(request):
     user_grant = get_user_grant(request)
     if user_grant == "custom":
@@ -99,6 +87,27 @@ def about(request):
     else:
         return redirect('/index/home/')  
 
+
+@csrf_exempt
+def get_login_user(request):
+    login_user = request.session.get('login_user',None)
+    #login_user = userInf.objects.get(user_name=cur_user).user_nickname
+    if login_user:
+        return HttpResponse(json.dumps({"login_user": login_user}), content_type='application/json;charset=utf-8')
+    else:
+        return HttpResponse(json.dumps({"login_user": None}), content_type='application/json;charset=utf-8')
+
+def songs_list(request):
+    user_grant = get_user_grant(request)
+    print(user_grant)
+    if user_grant == "custom":
+        login_user=request.session.get('login_user',None)
+        return render(request, 'songs_list.html',{'extend': 'index.html','range':range(10)})
+    elif user_grant == "user":
+        login_user=request.session.get('login_user',None)
+        return render(request, 'songs_list.html',{'extend': 'userIndex.html','range':range(10)})
+    else:
+        return redirect('/index/home/')
 
 def phones_list(request):
     user_grant = get_user_grant(request)
@@ -360,15 +369,6 @@ def get_order_his_count(request):
     server_id = userInf.objects.get(user_name=admin_user)
     count = workOrders.objects.filter(server_id=server_id,order_status=True).count()
     return HttpResponse(json.dumps({"count": count}), content_type='application/json;charset=utf-8')
-
-@csrf_exempt
-def get_login_user(request):
-    cur_user = request.session.get('login_user',None)
-    login_user = userInf.objects.get(user_name=cur_user).user_nickname
-    if login_user:
-        return HttpResponse(json.dumps({"login_user": login_user}), content_type='application/json;charset=utf-8')
-    else:
-        return HttpResponse(json.dumps({"login_user": None}), content_type='application/json;charset=utf-8')
 
 @csrf_exempt
 def addHost(request):
