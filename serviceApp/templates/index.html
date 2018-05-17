@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>游客用户页面</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+  <style type="text/css">
+  	* {
+  		margin: 0px;
+  		padding: 0px;
+  	}
+    body {
+        background-color: #cccccc8f; 
+    }
+  </style>
+  <script type="text/javascript">
+
+function filterHost() {
+    var keyWords = $("input[name='sinput']").val();
+    //alert(keyWords)
+    getRequest("/filterHost/", "keyWords="+keyWords, true, filterHostResult);
+}
+function enterSearch(){
+    $("input[name = 'sinput']").keydown(function(event){  
+        if(event.which == "13")      
+            filterHost(); 
+    })
+}
+function filterHostResult(ret) {
+    if(ret) {
+        var newDoc = document.open("text/html", "replace");
+        newDoc.write(ret);
+        newDoc.close();
+    }
+}
+   /* function btnClick(){
+        $("btn-fade").click(function(){
+            $("this").css("background-color","#00f");
+        });
+    }*/
+  </script>
+  </head>
+  <body>
+    <nav style="display:flex">
+        <div style="width: 200px;padding: 20px;" class="right-info">
+            <button type="text" onclick="userRegister()" class="btn btn-info" style="float:right;color:white;margin-left: 20px;mar">注册？</button>
+            <button type="text" onclick="userLogin()" class="btn btn-primary" style="float: right;color:white;"><span class="glyphicon glyphicon-user" style="float:left;" aria-hidden="true"></span>登录</button>         
+        </div>
+        <div style="flex: 1;" class="right-info">
+        <div class="container-fluid text-center text-md-left">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="text-uppercase">手机售后服务平台</h5>
+                    <p style="padding:10px 20px;">专业手机设备售后服务平台，通过整合线上线下相关资源，提供进口、国产等主流机型的专业售后工单服务。</p>
+                </div>
+                <div class="col-md-4" style="text-align: left;">
+                    <h5 class="text-uppercase">联系我们</h5>
+                    <ul class="list-unstyled" >
+                        <li>
+                            <a href="javascript:void(0);"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></a><span>2018年4月10号</span>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></a><span>18829298880</span>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></a><span>西安市金花南路5号理工大厦</span>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+        </div>
+        </div>
+    </nav>
+    <div class="content">
+        <div style="background-color:#337ab7;padding:20 0px;">
+        <ul class="nav nav-pills nav-justified">
+            <li role="presentation" class="page-info">
+                <a style="color:black;" href="/index/home">首页</a>
+            </li>
+            <li role="presentation" class="phones-info" >
+                <a style="color:black;" href="/index/phones_list">服务手机</a>
+            </li>
+            <li role="presentation" class="servers-info">
+                <a style="color:black;" href="/index/servers_list">客服人员</a>
+            </li>
+            <li role="presentation" class="about-us">
+                <a style="color:black;" href="/index/about">关于我们</a>
+            </li>
+        </ul>
+        </div>
+        <div class="content-info" style="margin-top:0px;">
+             {% block content %} 
+             {% endblock %}
+            </div>
+        </div>
+    <script src="/static/js/jquery-1.12.4.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/ajax.js"></script>
+    <script src="/static/js/text-utils.js"></script>
+    <script src="/static/js/index.js"></script>
+    <script>
+    $(function () {
+            $("input[name = 'username']").keydown(function (event) {
+                if (event.which == "13")
+                    $("input[name = 'password']").focus()
+            })
+            $("input[name = 'password']").keydown(function (event) {
+                if (event.which == "13")
+                    checkLogin();
+            })
+            $("input[name = 'submit']").click(function () {
+                checkLogin();
+            });
+        })
+    </script>
+  </body>
+</html>

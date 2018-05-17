@@ -1,0 +1,102 @@
+{% extends extend %} 
+{% block content %}
+<table class="table table-hover" style="table-layout:fixed;margin-top:20px; font-size:1.2em">
+    <thead>
+        {% if user_grant == 'user' %}
+        <th>客服人员</th>
+        {% elif user_grant == 'admin' %}
+        <th>工单用户</th>
+        {% endif %}
+        <th>手机类型</th>
+        <th>工单标题</th>
+        <th>工单信息</th>
+        <th>工单时间</th>
+        <th>工单操作</th>
+    </thead>
+    <tbody id='table-group'>
+        {% for list in lists %}
+        <tr>
+         {% if user_grant == 'user' %}
+            <td>
+                <span data-html='true' data-toggle='popover' data-trigger='hover' data-containter='body' data-placement='top' data-content='{{ list.user_id }}'
+                    data-original-title="" title="">{{ list.server_id }}</span>
+            </td>
+        {% elif user_grant == 'admin' %}
+            <td>
+                <span data-html='true' data-toggle='popover' data-trigger='hover' data-containter='body' data-placement='top' data-content='{{ list.user_id }}'
+                    data-original-title="" title="">{{ list.user_id }}</span>
+            </td>
+        {% endif %}
+            <td>
+                <span data-html='true' data-toggle='popover' data-trigger='hover' data-containter='body' data-placement='top' data-content='{{ list.phone_id }}'
+                    data-original-title="" title="">{{ list.phone_id }}</span>
+            </td>
+            <td>
+                <span data-html='true' data-toggle='popover' data-trigger='hover' data-containter='body' data-placement='top' data-content='{{ list.order_title }}'
+                    data-original-title="" title="">{{ list.order_title }}</span>
+            </td>
+            <td>
+                <span data-html='true' data-toggle='popover' data-trigger='hover' data-containter='body' data-placement='top' data-content='{{ list.order_details }}'
+                    data-original-title="" title="">{{ list.order_details }}</span>
+            </td>
+            <td>
+                <span data-html='true' data-toggle='popover' data-trigger='hover' data-containter='body' data-placement='top' data-content='{{ list.order_time }}'
+                    data-original-title="" title="">{{ list.order_time }}</span>
+            </td>
+            <td>
+                <button order-id={{ list.order_id }} id="close_id" class="btn btn-link" style="padding:0px;" onclick="order_commit(this)">工单回复</button>
+                <button order-id={{ list.order_id }} class="btn btn-link" style="padding:0px;" onclick="order_close()">工单关闭</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<style>
+        .admin-orders {
+        border-right: 6px solid #39b58b;
+    }
+    .orders-manage {
+        border-bottom: 6px solid #39b58b;
+    }
+</style>
+<script>
+    (function () {
+        $("span[data-trigger='hover']").popover();
+    })()
+    function order_close(){
+        var reply = confirm("您确认要关闭此工单吗?")
+        if (reply == true) {
+        var order_id = $("#close_id").attr('order-id')
+        alert(order_id) 
+        postRequest("/order_close/", {'order_id': order_id}, true, order_close_ret);
+        }else{
+            alert("你取消了关闭工单操作!")
+        }
+    }
+    function order_close_ret(ret) {
+        if (ret == true) {
+            alert("关闭工单成功!");
+            location.reload()
+        }else {
+            alert("关闭工单失败！");
+            location.reload()
+        }
+    }
+        function order_commit(elem) {
+            var html = ""
+            var order_id = $(elem).attr('order-id')
+            var commit_to = $(elem).parents("tr").children("td:eq(0)").children("span").text();
+            /*alert(order_id)
+            alert(commit_to)*/
+            var commitInfo = httpGet("/commit_html/?order_id="+order_id+"");
+            html += commitInfo;
+            html += "<span id='order_id' style='display:none;'>" + order_id + "</span>"
+            html += "<span id='commit_to' style='display:none;'>" + commit_to + "</span>";
+            var title = "回复工单"
+            dialogAlert(title, html);
+            $(".bootstrap-dialog-message").css("height", "500px");
+            $(".bootstrap-dialog-message").css("overflow", "scroll");
+            $(".bootstrap-dialog-message").css("text-align", "left");
+        } 
+</script>
+{% endblock %}
