@@ -1,7 +1,7 @@
 {% extends extend %} 
 {% block content %}
-<div style="margin:30px 60px;padding:1px;border:0.2px solid #5bc0de;">
-<table class="table table-hover" style="table-layout:fixed; font-size:1.2em;margin-bottom:0px;">
+<div style="margin:30px 60px;padding:1px;border:0.2px solid #5bc0de;width:100%;">
+<table class="table table-hover" style="table-layout:fixed; font-size:1.2em;margin-bottom:0px;"  align="center">
     <thead>
         <th>排行</th>
         <th>歌曲</th>
@@ -21,8 +21,10 @@
     <td class="song-author">
         <span>{{ item.song_author }}</span>
     </td>
-    <td class="song-lyric">
-            <span style="width:100%">{{ item.song_lyric }}</span>
+    <td class="song-lyric" song-id = "{{ item.song_id }}">
+        <a href="javascript:void(0)" onclick="song_lyric(this)">
+            查看歌词
+        </a>
     </td>
     <td class="action" song-id = "{{ item.song_id }}">
             <a class="artist" href="http://{{ item.song_url }}"  target="_blank">
@@ -30,9 +32,11 @@
             {% if user_grant == "custom" %}
             <button data-action="like" class="like" title="收藏" onclick="userLogin()">收藏</button>
             <button data-action="share" class="share" title="分享" onclick="userLogin()">分享</button>
+            <button data-action="like" class="like" title="收藏" onclick="song_commits(this)">评论</button>
             {% else %}
             <button data-action="like" class="like" title="收藏" onclick="song_liked(this)">收藏</button>
             <button data-action="share" class="share" title="分享" onclick="song_share(this)">分享</button>
+            <button data-action="like" class="like" title="收藏" onclick="song_commits(this)">评论</button>
             {% endif %}
     </td>
 </tr>
@@ -59,10 +63,31 @@
     (function () {
         $('.selectpicker').selectpicker();
         $("span[data-trigger='hover']").popover();
+        $('.collapse').collapse()
     })()
-    function song_liked(elem) {
-        
+
+    function song_lyric(elem) {
+        var song_id = $(elem).parent().attr("song-id")
+        var song_name = $(elem).parents(".entry").find(".artist").attr("title")
+        var title = song_name+"的歌词" 
+        var html = ""
+        html += "<p>明天你好！</p>"
+        dialogAlert(title, html);
     }
+    function song_liked(elem) {
+        var song_id = $(elem).parent().attr("song-id");
+        data = { 'song_id': song_id };
+        postRequest("/song_liked/", data, true, likedResult);
+    }
+    function likedResult(params) {
+        if (params == true){
+            $(".Dialog").remove();
+                    alert("恭喜您收藏歌曲成功！");
+                }else {
+                    alert("收藏失败，请稍后重试！")
+            }
+    }
+
     function song_share(elem) {
             var html = ""
             var song_id = $(elem).parents(".action").attr('song-id')
