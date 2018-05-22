@@ -13,8 +13,10 @@ class userInf(models.Model):
 
 class songsInf(models.Model):
     song_id = models.AutoField(primary_key=True, null=False)
-    song_name = models.CharField(max_length = 100)
+    song_name = models.CharField(max_length = 40)
+    song_author = models.CharField(max_length = 40)
     song_url = models.CharField(max_length = 255)
+    song_lyric = models.CharField(max_length = 4000)
     def __str__(self):
         return self.song_name
 

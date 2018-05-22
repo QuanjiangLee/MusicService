@@ -2,24 +2,38 @@
 {% block content %}
 <div style="margin:30px 60px;padding:1px;border:0.2px solid #5bc0de;">
 <table class="table table-hover" style="table-layout:fixed; font-size:1.2em;margin-bottom:0px;">
+    <thead>
+        <th>排行</th>
+        <th>歌曲</th>
+        <th>作者</th>
+        <th>歌词</th>
+        <th>操作</th>
+    </thead>
     <tbody id='table-group'>
-    {% for i in range %}   
-<tr >
-    <td class="check">
-        <input data-action="check" type="checkbox" name="chartids" value="1803053391" checked="checked">
+    {% for item in items %}   
+<tr class="entry">
+    <td class="list-no">
+        <span>{{ forloop.counter }}</span>
     </td>
-    <td class="trackid">1</td>
-    <td class="current">
-            <span>0</span>
+    <td class="song-main">
+                    <a class="artist" href="http://{{ item.song_url }}" title="{{ item.song_name }}" target="_blank">{{ item.song_name }}</a>
     </td>
-    <td class="songblock">
-                    <a class="artist" href="/artist/iim17edb" title="周杰伦(Jay Chou)" target="_blank">周杰伦(Jay Chou)</a>
+    <td class="song-author">
+        <span>{{ item.song_author }}</span>
     </td>
-    <td class="hot">
-            <span style="width:100%"></span>
+    <td class="song-lyric">
+            <span style="width:100%">{{ item.song_lyric }}</span>
     </td>
-    <td class="action">
-            <button data-action="play" class="play" onclick="play(1803053391, 'default', 0, this);" title="试听">试听</button>
+    <td class="action" song-id = "{{ item.song_id }}">
+            <a class="artist" href="http://{{ item.song_url }}"  target="_blank">
+            <button data-action="play" class="play" title="试听">试听</button></a>
+            {% if user_grant == "custom" %}
+            <button data-action="like" class="like" title="收藏" onclick="userLogin()">收藏</button>
+            <button data-action="share" class="share" title="分享" onclick="userLogin()">分享</button>
+            {% else %}
+            <button data-action="like" class="like" title="收藏" onclick="song_liked(this)">收藏</button>
+            <button data-action="share" class="share" title="分享" onclick="song_share(this)">分享</button>
+            {% endif %}
     </td>
 </tr>
 {% endfor %}
@@ -43,14 +57,22 @@
 </style>
 <script>
     (function () {
+        $('.selectpicker').selectpicker();
         $("span[data-trigger='hover']").popover();
     })()
-    function order_details(elem) {
+    function song_liked(elem) {
+        
+    }
+    function song_share(elem) {
             var html = ""
-            var order_id = $(elem).attr('order-id')
-            var commitInfo = httpGet("/commit_html/?order_id=" + order_id + "&order_type=details");
+            var song_id = $(elem).parents(".action").attr('song-id')
+            var song_name = $(elem).parents(".entry").find(".artist").attr("title")
+            html +="<h3>您想要分享的歌曲是：<span id='song-name'>" + song_name + "</span></h3>";
+            html += "<h5>想要分享给：</h5>";
+            var commitInfo = httpGet("/share_html/");
             html += commitInfo;
-            var title = "查看工单详情"
+            html += "<span id='song-id' style='display:none;'>" + song_id + "</span>";
+            var title = "分享歌曲给其他人"
             dialogAlert(title, html);
             $(".bootstrap-dialog-message").css("height", "500px");
             $(".bootstrap-dialog-message").css("overflow", "scroll");

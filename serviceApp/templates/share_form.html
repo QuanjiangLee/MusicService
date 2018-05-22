@@ -1,0 +1,61 @@
+<div>
+<select id="select-users" class="selectpicker show-menu-arrow form-control" multiple data-width="100%"
+    data-live-search="true" data-live-search-placeholder="搜索分享对象">
+    {% if userlist %}
+    {% for user in userlist %}
+    <option user_id={{user.user_id}}>{{ user.user_name }}</option>
+    {% endfor %}
+    {% endif %}
+</select>
+<br>
+<br>
+    <label>分享理由：</label>
+    <textarea class="form-control" style="margin: 10px 0px;" name="order-details"  rows="5" placeholder="请输入分享理由"></textarea>
+    <div class="alter-info" style=" text-align:center;">
+    <button onclick="orderReset()" class="btn btn-info" name="reset">重置内容</button>
+    <button onclick="orderSubmit()" class="btn btn-primary" name="submit">确认分享</button>
+    </div>
+</div>
+<style>
+    .bootstrap-dialog-message {
+        text-align: left;
+    }
+    .dropdown-menu {
+        left: 0px; 
+}
+</style>
+<script>
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+    });
+    function orderReset(){
+        $("textarea[name='order-details']").val('');
+    }
+    function orderSubmit(){
+        var song_id = $('#song-id').text();
+        var share_details = $("textarea[name='order-details']").val();
+        var share_to = []
+        var users = $(".selected").each(function () {
+            if($(this).children("a").attr("aria-selected") == "true"){
+                share_to.push($(this).find("span").text())
+            }
+        });
+        alert(song_id)
+        alert(share_to)
+        alert(share_details)
+        if(share_to.length < 1){
+            alert("请至少选择一个分享人员！")
+        }else{
+        data = { 'song_id': song_id, 'share_to': share_to, 'share_details': share_details };
+        postRequest("/share_song/", data, true, addOrderResult);
+        }
+    }
+    function addOrderResult(ret) {
+        if (ret == true){
+            $(".Dialog").remove();
+            alert("恭喜您分享成功！");
+        }else{
+            alert("分享失败，请稍后重试！")
+        }
+    }
+</script>

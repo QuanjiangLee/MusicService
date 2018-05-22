@@ -29,8 +29,10 @@ urlpatterns = [
     url(r'^userIndex/songs_list/$', views.songs_list),
     url(r'^userIndex/songs_liked/$', views.songs_list),
     url(r'^userIndex/songs_shared/$', views.songs_list),
+    url(r'^share_html/$', views.share_html),
     url(r'^index/about/$', views.about),
     url(r'^userIndex/about/$', views.about),
+    url(r'^get_test/$', views.get_test),
 
 
     url(r'^index/servers_list/$', views.servers_list),

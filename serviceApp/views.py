@@ -3,6 +3,7 @@ import json
 import time
 from django.http import HttpResponse
 from django.contrib.sessions.models import Session
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from datetime import datetime
 from django.http import Http404
@@ -29,10 +30,10 @@ def verifyLogin(request):
         passwd = data['passwd']
     print('userNo',userNo)
     print('passwd',passwd)
-    user = is_user_exist(userNo, passwd)
+    user = userInf.objects.filter(user_name=userNo, user_passwd=passwd)
     print('user is', user)
-    if user[0][0] > 0:
-        user_grant = user[0][1]
+    if user:
+        user_grant = 0
         request.session["login_user"] = userNo
         request.session["user_grant"] = user_grant
         sessionId=request.session.session_key 
@@ -100,14 +101,25 @@ def get_login_user(request):
 def songs_list(request):
     user_grant = get_user_grant(request)
     print(user_grant)
+    items = songsInf.objects.all()
     if user_grant == "custom":
-        login_user=request.session.get('login_user',None)
-        return render(request, 'songs_list.html',{'extend': 'index.html','range':range(10)})
+        return render(request, 'songs_list.html',{'extend': 'index.html','items':items, 'user_grant':user_grant})
     elif user_grant == "user":
-        login_user=request.session.get('login_user',None)
-        return render(request, 'songs_list.html',{'extend': 'userIndex.html','range':range(10)})
+        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items, 'user_grant':user_grant})
     else:
         return redirect('/index/home/')
+
+def share_html(request):
+    login_user=request.session.get('login_user',None)
+    userlist = userInf.objects.filter(~Q(user_name=login_user))
+    print(userlist)
+    return render(request, 'share_form.html', {'userlist': userlist})
+
+#def share_song(request):
+
+
+def get_test(request):
+    return render(request, 'test.html')
 
 def phones_list(request):
     user_grant = get_user_grant(request)
@@ -215,7 +227,8 @@ def registerUser(request):
         userNo = data['userNo']
         passwd = data['passwd']
         print(userNo, passwd)
-        if register_user(userNo,passwd):
+        ret = userInf.objects.create(user_name=userNo, user_nickname="小乐", user_passwd=passwd)
+        if ret:
             return HttpResponse(json.dumps({'ret':True}), content_type='application/json;c:harset=utf-8')
         else:
             return HttpResponse(json.dumps({'ret':False}), content_type='application/json;charset=utf-8')
