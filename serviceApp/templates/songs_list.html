@@ -3,40 +3,58 @@
 <div style="margin:30px 60px;padding:1px;border:0.2px solid #5bc0de;width:100%;">
 <table class="table table-hover" style="table-layout:fixed; font-size:1.2em;margin-bottom:0px;"  align="center">
     <thead>
+        {% if list_type == 'all' %}
         <th>排行</th>
         <th>歌曲</th>
+        {% else %}
+        <th>喜欢歌曲</th>
+        {% endif %}
         <th>作者</th>
         <th>歌词</th>
+        {% if list_type == 'liked' %}
+        <th>喜欢时间</th>
+        {% endif %}
         <th>操作</th>
     </thead>
     <tbody id='table-group'>
     {% for item in items %}   
 <tr class="entry">
+     {% if list_type == 'all' %}
     <td class="list-no">
         <span>{{ forloop.counter }}</span>
     </td>
+    {% endif %}
     <td class="song-main">
-                    <a class="artist" href="http://{{ item.song_url }}" title="{{ item.song_name }}" target="_blank">{{ item.song_name }}</a>
+                    <a class="artist" href="http://{{ item.0.song_url }}" title="{{ item.0.song_name }}" target="_blank">{{ item.0.song_name }}</a>
     </td>
     <td class="song-author">
-        <span>{{ item.song_author }}</span>
+        <span>{{ item.0.song_author }}</span>
     </td>
-    <td class="song-lyric" song-id = "{{ item.song_id }}">
+    <td class="song-lyric" song-id = "{{ item.0.song_id }}">
         <a href="javascript:void(0)" onclick="song_lyric(this)">
             查看歌词
         </a>
     </td>
-    <td class="action" song-id = "{{ item.song_id }}">
-            <a class="artist" href="http://{{ item.song_url }}"  target="_blank">
+    {% if list_type == 'liked' %}
+    <td class="like-time">
+        <span>{{ item.1.like_date }}</span>
+    </td>
+     {% endif %}
+    <td class="action" song-id = "{{ item.0.song_id }}">
+            <a class="artist" href="http://{{ item.0.song_url }}"  target="_blank">
             <button data-action="play" class="play" title="试听">试听</button></a>
             {% if user_grant == "custom" %}
             <button data-action="like" class="like" title="收藏" onclick="userLogin()">收藏</button>
             <button data-action="share" class="share" title="分享" onclick="userLogin()">分享</button>
-            <button data-action="like" class="like" title="收藏" onclick="song_commits(this)">评论</button>
+            <button data-action="commit" class="commit" title="评论" onclick="song_commits(this)">评论</button>
             {% else %}
+            {% if list_type == 'all'%}
             <button data-action="like" class="like" title="收藏" onclick="song_liked(this)">收藏</button>
+            {% else %}
+            <button like-id={{ item.1.like_id}} data-action="unlike" class="like" title="收藏" onclick="song_unliked(this)">取消收藏</button>
+            {% endif %}
             <button data-action="share" class="share" title="分享" onclick="song_share(this)">分享</button>
-            <button data-action="like" class="like" title="收藏" onclick="song_commits(this)">评论</button>
+            <button data-action="commit" class="commit" title="评论" onclick="song_commits(this)">评论</button>
             {% endif %}
     </td>
 </tr>
@@ -103,5 +121,18 @@
             $(".bootstrap-dialog-message").css("overflow", "scroll");
             $(".bootstrap-dialog-message").css("text-align", "left");
         }
+
+    function song_unliked(elem) {
+        var like_id = $(elem).attr("like-id")
+        postRequest("/song_unliked/", { 'like_id': like_id }, true, unlikedResult);
+    }
+    function unlikedResult(ret) {
+        if (ret == true) {
+            alert("取消收藏歌曲成功！");
+            location.reload();
+        } else {
+            alert("取消收藏歌曲失败，请稍后重试！")
+        }
+    }
 </script>
 {% endblock %}

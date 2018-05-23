@@ -1,0 +1,107 @@
+{% extends extend %} 
+{% block content %}
+<div style="margin:25px 50px;padding:5px;width:100%;">
+{% for item in items %}
+<div class="panel panel-info" style="padding:0px;" >
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span style="color:black">来自</span>&nbsp;{{ item.0.share_from }}&nbsp;<span style="color:black">的分享歌曲：</span> </h3>
+    </div>
+    <div class="panel-body" style="width:100%; padding: 0px;">
+        <table class="table table-hover" style="table-layout:fixed; font-size:1em;margin-bottom:0px;" align="center">
+            <thead>
+                <th>歌曲</th>
+                <th>作者</th>
+                <th>歌词</th>
+                <th>操作</th>
+            </thead>
+            <tbody id='table-group'>
+        <tr class="entry">
+            <td class="song-main">
+                <a class="artist" href="http://{{ item.1.song_url }}" title="{{ item.1.song_name }}" target="_blank">{{ item.1.song_name }}</a>
+            </td>
+            <td class="song-author">
+                <span>{{ item.1.song_author }}</span>
+            </td>
+            <td class="song-lyric" song-id="{{ item.1.song_id }}">
+                <a href="javascript:void(0)" onclick="song_lyric(this)">
+                    查看歌词
+                </a>
+            </td>
+            <td class="action" song-id="{{ item.1.song_id }}">
+                <a class="artist" href="http://{{ item.1.song_url }}" target="_blank">
+                    <button data-action="play" class="play" tit1e="试听">试听</button>
+                </a>
+                <button data-action="like" class="like" title="收藏" onclick="song_liked(this)">收藏</button>
+                <button data-action="share" class="share" title="分享" onclick="song_share(this)">分享</button>
+                <button data-action="commit" class="commit" title="评论" onclick="song_commits(this)">评论</button>
+                <button share-id={{ item.0.share_id }} data-action="del" class="del" title="删除" onclick="del_shared(this)">删除此分享</button>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+        <label style="display:inline-block">&nbsp;好友分享理由：</label>
+        <div style="padding: 0px 15px;">
+        <p style="margin:0px;">{{ item.0.share_commit }}</p>
+        <span style="float: right;">分享时间： {{  item.0.share_date }}</span>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+<style>
+   td {
+       margin-left: 20px; 
+    }
+</style>
+<script>
+    function song_lyric(elem) {
+            var song_id = $(elem).parent().attr("song-id")
+            var song_name = $(elem).parents(".entry").find(".artist").attr("title")
+            var title = song_name + "的歌词"
+            var html = ""
+            html += "<p>明天你好！</p>"
+            dialogAlert(title, html);
+        }
+    function song_liked(elem) {
+        var song_id = $(elem).parent().attr("song-id");
+        data = { 'song_id': song_id };
+        postRequest("/song_liked/", data, true, likedResult);
+    }
+    function likedResult(params) {
+        if (params == true) {
+            $(".Dialog").remove();
+            alert("恭喜您收藏歌曲成功！");
+        } else {
+            alert("收藏失败，请稍后重试！")
+        }
+    }
+    function song_share(elem) {
+        var html = ""
+        var song_id = $(elem).parents(".action").attr('song-id')
+        var song_name = $(elem).parents(".entry").find(".artist").attr("title")
+        html += "<h3>您想要分享的歌曲是：<span id='song-name'>" + song_name + "</span></h3>";
+        html += "<h5>想要分享给：</h5>";
+        var commitInfo = httpGet("/share_html/");
+        html += commitInfo;
+        html += "<span id='song-id' style='display:none;'>" + song_id + "</span>";
+        var title = "分享歌曲给其他人"
+        dialogAlert(title, html);
+        $(".bootstrap-dialog-message").css("height", "500px");
+        $(".bootstrap-dialog-message").css("overflow", "scroll");
+        $(".bootstrap-dialog-message").css("text-align", "left");
+    }
+    function del_shared(elem) {
+        var share_id = $(elem).attr("share-id")
+        postRequest("/del_shared/", { 'share_id':share_id }, true, delSharedResult);
+    }
+    function delSharedResult(ret) {
+        if (ret == true) {
+            alert("删除被分享的歌曲成功！");
+            location.reload();
+        } else {
+            alert("删除被分享的歌曲失败，请稍后重试！")
+        }
+    }
+</script>
+{% endblock %}

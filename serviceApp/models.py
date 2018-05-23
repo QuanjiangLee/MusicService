@@ -28,7 +28,7 @@ class songShare(models.Model):
     share_commit = models.CharField(max_length = 255)
     share_date = models.DateTimeField(auto_now_add = True)
     class Meta:  #按时间下降排序
-        ordering = ['share_date']
+        ordering = ['-share_date']
     def __str__(self):
         return self.share_commit
 
@@ -38,7 +38,7 @@ class songCommit(models.Model):
     commit_details = models.CharField(max_length = 255)
     commit_date = models.DateTimeField(auto_now_add = True)
     class Meta:  #按时间下降排序
-        ordering = ['commit_date']
+        ordering = ['-commit_date']
     def __str__(self):
         return self.commit_details
 
@@ -48,4 +48,4 @@ class songLikes(models.Model):
     like_song = models.ForeignKey(songsInf, related_name='like_song', on_delete=models.DO_NOTHING)
     like_date = models.DateTimeField(auto_now_add = True)
     class Meta:  #按时间下降排序
-        ordering = ['like_date']
+        ordering = ['-like_date']

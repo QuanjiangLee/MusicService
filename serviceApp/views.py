@@ -101,11 +101,14 @@ def get_login_user(request):
 def songs_list(request):
     user_grant = get_user_grant(request)
     print(user_grant)
-    items = songsInf.objects.all()
+    items = []
+    songs = songsInf.objects.all()
+    for song in songs:
+        items.append([song])
     if user_grant == "custom":
-        return render(request, 'songs_list.html',{'extend': 'index.html','items':items, 'user_grant':user_grant})
+        return render(request, 'songs_list.html',{'extend': 'index.html','items':items,'list_type':'all','user_grant':user_grant})
     elif user_grant == "user":
-        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items, 'user_grant':user_grant})
+        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items,'list_type':'all', 'user_grant':user_grant})
     else:
         return redirect('/index/home/')
 
@@ -122,9 +125,9 @@ def get_songs_liked(request):
     items = []
     like_songs = songLikes.objects.filter(like_user=user)
     for like in like_songs:
-        items.append(like.like_song)
+        items.append([like.like_song,like])
     if user_grant == "user":
-        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items, 'user_grant':user_grant})
+        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items,'list_type':'liked', 'user_grant':user_grant})
     else:
         return redirect('/index/home/')
 
@@ -149,8 +152,79 @@ def song_liked(request):
         print(str(err))
         return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
         
-#def share_song(request):
+@csrf_exempt
+def share_song(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode("utf-8"))
+    else:
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    try:
+        song_id = data['song_id']
+        share_users = data['share_to']
+        share_details = data['share_details']
+        login_user=request.session.get('login_user',None)
+        share_from = userInf.objects.get(user_name=login_user)
+        share_song = songsInf.objects.get(song_id=int(song_id))
+        for user in share_users:
+            try:
+                share_to = userInf.objects.get(user_name=user)
+                songShare.objects.create(share_from=share_from, share_to=share_to,share_song=share_song, share_commit= share_details)
+            except Exception as err:
+                return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    except Exception as err:
+        print(str(err))
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    else:
+        return HttpResponse(json.dumps(True), content_type='application/json;charset=utf-8')
 
+@csrf_exempt
+def del_shared(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode("utf-8"))
+    else:
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    try:
+        share_id = data['share_id']
+        ret = songShare.objects.filter(share_id=share_id).delete()
+        if ret:
+            return HttpResponse(json.dumps(True), content_type='application/json;c:harset=utf-8')
+        else:
+            return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    except Exception as err:
+        print(str(err))
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+
+@csrf_exempt
+def song_unliked(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode("utf-8"))
+    else:
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    try:
+        like_id = data['like_id']
+        ret = songLikes.objects.filter(like_id=like_id).delete()
+        if ret:
+            return HttpResponse(json.dumps(True), content_type='application/json;c:harset=utf-8')
+        else:
+            return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    except Exception as err:
+        print(str(err))
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+
+def get_songs_shared(request):
+    user_grant = get_user_grant(request)
+    login_user=request.session.get('login_user',None)
+    user_to = userInf.objects.get(user_name=login_user)
+    items = []
+    share_songs = songShare.objects.filter(share_to=user_to)
+    for song in share_songs:
+        items.append([song,song.share_song])
+    print(items)
+    item_len = len(items)
+    if user_grant == "user":
+        return render(request, 'shared_html.html',{'extend': 'userIndex.html','items':items, 'user_grant':user_grant})
+    else:
+        return redirect('/index/home/')
 
 def get_test(request):
     return render(request, 'test.html')
