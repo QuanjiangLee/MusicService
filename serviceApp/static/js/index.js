@@ -109,3 +109,106 @@ function registerResult(ret) {
         alert("opps!注册新用户失败！")
     }
 }
+
+
+function orderReset() {
+    $("textarea[name='order-details']").val('');
+}
+function orderSubmit() {
+    var song_id = $('#song-id').text();
+    var share_details = $("textarea[name='order-details']").val();
+    var share_to = []
+    var users = $(".selected").each(function () {
+        if ($(this).children("a").attr("aria-selected") == "true") {
+            share_to.push($(this).find("span").text())
+        }
+    });
+    /*alert(song_id)
+    alert(share_to)
+    alert(share_details)*/
+    if (share_to.length < 1) {
+        alert("请至少选择一个分享人员！")
+    } else {
+        data = { 'song_id': song_id, 'share_to': share_to, 'share_details': share_details };
+        postRequest("/share_song/", data, true, addOrderResult);
+    }
+}
+function addOrderResult(ret) {
+    if (ret == true) {
+        $(".Dialog").remove();
+        alert("恭喜您分享成功！");
+    } else {
+        alert("分享失败，请稍后重试！")
+    }
+}
+
+function song_lyric(elem) {
+    var song_id = $(elem).parent().attr("song-id")
+    postRequest("/song_lyric/", { 'song_id': song_id }, true, lyricResult);
+}
+
+function lyricResult(ret) {
+    if (ret) {
+        var title = ret['song_name'] + " 的歌词"
+        var html = "<p>"+ret['song_lyric']+"</p>"
+        dialogAlert(title, html);
+    } else {
+        alert("歌词获取错误，请稍候重试！");
+    }
+}
+
+function song_liked(elem) {
+    var song_id = $(elem).parent().attr("song-id");
+    data = { 'song_id': song_id };
+    postRequest("/song_liked/", data, true, likedResult);
+}
+function likedResult(params) {
+    if (params == true) {
+        $(".Dialog").remove();
+        alert("恭喜您收藏歌曲成功！");
+    } else {
+        alert("收藏失败，请稍后重试！")
+    }
+}
+
+function song_share(elem) {
+    var html = ""
+    var song_id = $(elem).parents(".action").attr('song-id')
+    var song_name = $(elem).parents(".entry").find(".artist").attr("title")
+    html += "<h3>您想要分享的歌曲是：<span id='song-name'>" + song_name + "</span></h3>";
+    html += "<h5>想要分享给：</h5>";
+    var commitInfo = httpGet("/share_html/");
+    html += commitInfo;
+    html += "<span id='song-id' style='display:none;'>" + song_id + "</span>";
+    var title = "分享歌曲给其他人"
+    dialogAlert(title, html);
+    $(".bootstrap-dialog-message").css("height", "500px");
+    $(".bootstrap-dialog-message").css("overflow", "scroll");
+    $(".bootstrap-dialog-message").css("text-align", "left");
+}
+
+function song_unliked(elem) {
+    var like_id = $(elem).attr("like-id")
+    postRequest("/song_unliked/", { 'like_id': like_id }, true, unlikedResult);
+}
+function unlikedResult(ret) {
+    if (ret == true) {
+        alert("取消收藏歌曲成功！");
+        location.reload();
+    } else {
+        alert("取消收藏歌曲失败，请稍后重试！")
+    }
+}
+
+function del_shared(elem) {
+    var share_id = $(elem).attr("share-id")
+    postRequest("/del_shared/", { 'share_id': share_id }, true, delSharedResult);
+}
+function delSharedResult(ret) {
+    if (ret == true) {
+        alert("删除被分享的歌曲成功！");
+        location.reload();
+    } else {
+        alert("删除被分享的歌曲失败，请稍后重试！")
+    }
+}

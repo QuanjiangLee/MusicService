@@ -211,6 +211,24 @@ def song_unliked(request):
         print(str(err))
         return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
 
+@csrf_exempt
+def song_lyric(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode("utf-8"))
+    else:
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    try:
+        song_id = data['song_id']
+        ret = songsInf.objects.filter(song_id=song_id)
+        if ret:
+            print(ret[0].song_lyric)
+            return HttpResponse(json.dumps({'song_name':ret[0].song_name, 'song_lyric':ret[0].song_lyric}), content_type='application/json;c:harset=utf-8')
+        else:
+            return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+    except Exception as err:
+        print(str(err))
+        return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
+
 def get_songs_shared(request):
     user_grant = get_user_grant(request)
     login_user=request.session.get('login_user',None)
@@ -220,7 +238,21 @@ def get_songs_shared(request):
     for song in share_songs:
         items.append([song,song.share_song])
     print(items)
-    item_len = len(items)
+    if user_grant == "user":
+        return render(request, 'shared_html.html',{'extend': 'userIndex.html','items':items, 'user_grant':user_grant})
+    else:
+        return redirect('/index/home/')
+
+
+def get_songCommit(request):
+    user_grant = get_user_grant(request)
+    login_user=request.session.get('login_user',None)
+    user_to = userInf.objects.get(user_name=login_user)
+    if request.method == "GET":
+        song_id = request.GET.get('song_id',"")
+    if song_id:
+        song = songsInf.objects.get(song_id=song_id)
+        items = songCommit.objects.filter(commit_song=song)
     if user_grant == "user":
         return render(request, 'shared_html.html',{'extend': 'userIndex.html','items':items, 'user_grant':user_grant})
     else:

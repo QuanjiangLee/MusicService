@@ -46,15 +46,15 @@
             {% if user_grant == "custom" %}
             <button data-action="like" class="like" title="收藏" onclick="userLogin()">收藏</button>
             <button data-action="share" class="share" title="分享" onclick="userLogin()">分享</button>
-            <button data-action="commit" class="commit" title="评论" onclick="song_commits(this)">评论</button>
+            <button data-action="commit" class="commit" title="评论" onclick="userLogin()">评论</button>
             {% else %}
             {% if list_type == 'all'%}
             <button data-action="like" class="like" title="收藏" onclick="song_liked(this)">收藏</button>
             {% else %}
             <button like-id={{ item.1.like_id}} data-action="unlike" class="like" title="收藏" onclick="song_unliked(this)">取消收藏</button>
             {% endif %}
-            <button data-action="share" class="share" title="分享" onclick="song_share(this)">分享</button>
-            <button data-action="commit" class="commit" title="评论" onclick="song_commits(this)">评论</button>
+            <button  data-action="share" class="share" title="分享" onclick="song_share(this)">分享</button>
+            <button song-id={{ item.0.song_id }} data-action="commit" class="commit" title="评论" onclick="song_commits(this)">评论</button>
             {% endif %}
     </td>
 </tr>
@@ -62,10 +62,8 @@
 </tbody>
 </table>
 </div>
+<span style="display:none" id="menu-type">{{ list_type }}</span>
 <style>
-    .user-orders {
-        border-bottom: 6px solid #39b58b;
-    }
     .table>tbody>tr>td {
         border-top:none; 
         border-bottom: 1px solid #ddd;
@@ -73,66 +71,31 @@
     .table>tbody>tr:hover {
         background-color: #DBEEF5;
     }
-    .admin-orders-his {
-        border-right: 6px solid #39b58b;
-    }
+
 </style>
 <script>
     (function () {
         $('.selectpicker').selectpicker();
         $("span[data-trigger='hover']").popover();
         $('.collapse').collapse()
+        if ($("#menu-type").text() == 'all'){
+            $(".liked-info").css("border-bottom", "none");
+            $(".songs-info").css({"border-bottom": "6px solid #39b58b"});
+        }else{
+            $(".songs-info").css("border-bottom", "none");
+            $(".liked-info").css({"border-bottom": "6px solid #39b58b"});
+        }
     })()
-
-    function song_lyric(elem) {
-        var song_id = $(elem).parent().attr("song-id")
-        var song_name = $(elem).parents(".entry").find(".artist").attr("title")
-        var title = song_name+"的歌词" 
-        var html = ""
-        html += "<p>明天你好！</p>"
-        dialogAlert(title, html);
-    }
-    function song_liked(elem) {
-        var song_id = $(elem).parent().attr("song-id");
-        data = { 'song_id': song_id };
-        postRequest("/song_liked/", data, true, likedResult);
-    }
-    function likedResult(params) {
-        if (params == true){
-            $(".Dialog").remove();
-                    alert("恭喜您收藏歌曲成功！");
-                }else {
-                    alert("收藏失败，请稍后重试！")
-            }
-    }
-
-    function song_share(elem) {
+    function song_commits(elem) {
             var html = ""
-            var song_id = $(elem).parents(".action").attr('song-id')
-            var song_name = $(elem).parents(".entry").find(".artist").attr("title")
-            html +="<h3>您想要分享的歌曲是：<span id='song-name'>" + song_name + "</span></h3>";
-            html += "<h5>想要分享给：</h5>";
-            var commitInfo = httpGet("/share_html/");
-            html += commitInfo;
-            html += "<span id='song-id' style='display:none;'>" + song_id + "</span>";
-            var title = "分享歌曲给其他人"
+            var song_id = $(elem).attr('song-id')
+            var commitInfo = httpGet("/get_songCommit/?song_id=" + song_id);
+            html += commitInfo;get_songCommit
+            var title = "歌曲评论详情"
             dialogAlert(title, html);
             $(".bootstrap-dialog-message").css("height", "500px");
             $(".bootstrap-dialog-message").css("overflow", "scroll");
             $(".bootstrap-dialog-message").css("text-align", "left");
         }
-
-    function song_unliked(elem) {
-        var like_id = $(elem).attr("like-id")
-        postRequest("/song_unliked/", { 'like_id': like_id }, true, unlikedResult);
-    }
-    function unlikedResult(ret) {
-        if (ret == true) {
-            alert("取消收藏歌曲成功！");
-            location.reload();
-        } else {
-            alert("取消收藏歌曲失败，请稍后重试！")
-        }
-    }
 </script>
 {% endblock %}

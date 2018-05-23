@@ -1,8 +1,8 @@
-<label style="font-size:1.2em;margin-bottom:15px;">工单标题：&nbsp;{{ commit_title }}</label><br>
+<label style="font-size:1.2em;margin-bottom:15px;">歌曲名：&nbsp;{{ commit_title }}</label><br>
 {% for commit in commits %}
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h3 class="panel-title">{{ commit.commit_from }}&nbsp;<span style="color:black">回复</span>&nbsp;{{ commit.commit_to }} </h3>
+        <h3 class="panel-title">{{ commit.commit_from }}&nbsp;<span style="color:black">评论说：</span></h3>
     </div>
     <div class="panel-body">
         <p>{{ commit.commit_details }}</p>
@@ -11,19 +11,14 @@
     </div>
 </div>
 {% endfor %}
-{% if order_type == 'details' %}
-<label style="font-size:1.2em;">工单状态：&nbsp;<span style="color:red">已关闭！</span></lable>
-{% else %}
 <div class="reply-input">
-<label>回复内容：</label>
+<label>评价内容：</label>
 <textarea class="form-control" style="margin: 10px 0px;" name="order-details" rows="5" placeholder="请输入工单回复详细内容"></textarea>
 <div class="alter-info" style=" text-align:center;">
     <button onclick="commitReset()" class="btn btn-info" name="reset">重置</button>
     <button onclick="commitSubmit()" class="btn btn-primary" name="submit">提交</button>
 </div>
 </div>
-<span style="float: right;" class="btn btn-link" onclick="order_close()">关闭工单？</span>
-{% endif %}
 <script>
         function commitReset() {
             $("textarea[name='order-details']").val('');
@@ -42,9 +37,9 @@
         function commitResult(ret) {
             if (ret == true) {
                 $(".Dialog").remove();
-                alert("工单回复成功，请耐心等待回复！");
+                alert("恭喜您评论歌曲成功！");
             } else {
-                alert("工单申回复失败，请稍后重试！")
+                alert("评论歌曲失败，请稍后重试！")
             }
         }
 </script>

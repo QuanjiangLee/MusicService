@@ -28,34 +28,4 @@
     $(document).ready(function () {
         $('.selectpicker').selectpicker();
     });
-    function orderReset(){
-        $("textarea[name='order-details']").val('');
-    }
-    function orderSubmit(){
-        var song_id = $('#song-id').text();
-        var share_details = $("textarea[name='order-details']").val();
-        var share_to = []
-        var users = $(".selected").each(function () {
-            if($(this).children("a").attr("aria-selected") == "true"){
-                share_to.push($(this).find("span").text())
-            }
-        });
-        alert(song_id)
-        alert(share_to)
-        alert(share_details)
-        if(share_to.length < 1){
-            alert("请至少选择一个分享人员！")
-        }else{
-        data = { 'song_id': song_id, 'share_to': share_to, 'share_details': share_details };
-        postRequest("/share_song/", data, true, addOrderResult);
-        }
-    }
-    function addOrderResult(ret) {
-        if (ret == true){
-            $(".Dialog").remove();
-            alert("恭喜您分享成功！");
-        }else{
-            alert("分享失败，请稍后重试！")
-        }
-    }
 </script>
