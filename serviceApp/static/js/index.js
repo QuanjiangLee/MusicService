@@ -77,6 +77,8 @@ function registerResult(ret) {
     if (ret['ret'] == true) {
         alert("恭喜注册新用户成功！")
         userLogin();
+    } else if (ret['ret'] == 'registered') {
+        alert("opps!注册新用户失败，您输入的用户名已经注册过了！")
     } else {
         alert("opps!注册新用户失败！")
     }

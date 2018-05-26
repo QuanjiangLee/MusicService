@@ -86,11 +86,15 @@ def registerUser(request):
         userNo = data['userNo']
         passwd = data['passwd']
         print(userNo, passwd)
-        ret = userInf.objects.create(user_name=userNo, user_nickname="小乐", user_passwd=passwd)
+        ret = userInf.objects.filter(user_name=userNo)
         if ret:
-            return HttpResponse(json.dumps({'ret':True}), content_type='application/json;c:harset=utf-8')
+            return HttpResponse(json.dumps({'ret':'registered'}), content_type='application/json;charset=utf-8')
         else:
-            return HttpResponse(json.dumps({'ret':False}), content_type='application/json;charset=utf-8')
+            ret = userInf.objects.create(user_name=userNo, user_nickname="小乐", user_passwd=passwd)
+            if ret:
+                return HttpResponse(json.dumps({'ret':True}), content_type='application/json;c:harset=utf-8')
+            else:
+                return HttpResponse(json.dumps({'ret':False}), content_type='application/json;charset=utf-8')
     except Exception as err:
         print(str(err))
         return HttpResponse(json.dumps({'ret':False}), content_type='application/json;charset=utf-8')
