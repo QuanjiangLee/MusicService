@@ -86,16 +86,5 @@
             $(".liked-info").css({"border-bottom": "6px solid #39b58b"});
         }
     })()
-    function song_commits(elem) {
-            var html = ""
-            var song_id = $(elem).attr('song-id')
-            var commitInfo = httpGet("/get_songCommit/?song_id=" + song_id);
-            html += commitInfo;get_songCommit
-            var title = "歌曲评论详情"
-            dialogAlert(title, html);
-            $(".bootstrap-dialog-message").css("height", "500px");
-            $(".bootstrap-dialog-message").css("overflow", "scroll");
-            $(".bootstrap-dialog-message").css("text-align", "left");
-        }
 </script>
 {% endblock %}

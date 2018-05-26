@@ -20,45 +20,19 @@
   		padding: 0px;
   	}
   </style>
-  <script type="text/javascript">
-
-function filterHost() {
-    var keyWords = $("input[name='sinput']").val();
-    //alert(keyWords)
-    getRequest("/filterHost/", "keyWords="+keyWords, true, filterHostResult);
-}
-function enterSearch(){
-    $("input[name = 'sinput']").keydown(function(event){  
-        if(event.which == "13")      
-            filterHost(); 
-    })
-}
-function filterHostResult(ret) {
-    if(ret) {
-        var newDoc = document.open("text/html", "replace");
-        newDoc.write(ret);
-        newDoc.close();
-    }
-}
-   /* function btnClick(){
-        $("btn-fade").click(function(){
-            $("this").css("background-color","#00f");
-        });
-    }*/
-  </script>
   </head>
   <body>
-    <nav style="display:flex">
+    <nav style="display:flex;background: url(/static/image/nav-bg.jpg) no-repeat;width:100%;height:100%;background-size:100% 100%;">
         <div style="width: 200px;padding: 20px;" class="right-info">
-            <button type="text" onclick="userRegister()" class="btn btn-info" style="float:right;color:white;margin-left: 20px;mar">注册？</button>
+            <button type="text" onclick="userRegister()" class="btn btn-info" style="float:right;color:white;margin-left: 20px;">注册？</button>
             <button type="text" onclick="userLogin()" class="btn btn-primary" style="float: right;color:white;"><span class="glyphicon glyphicon-user" style="float:left;" aria-hidden="true"></span>登录</button>         
         </div>
-        <div style="flex: 1;" class="right-info">
+        <div style="flex: 1;;margin-bottom: 80px;" class="right-info">
         <div class="container-fluid text-center text-md-left">
             <div class="row">
                 <div class="col-md-10">
-                    <h5 class="text-uppercase" style="padding:10px 25px; font-size:2em">热门歌曲分享平台</h5>
-                    <p style="padding:10px 25px;font-size:1.2em">热门歌曲分享平台，你想听到的歌曲，都在这里！</p>
+                    <h5 class="text-uppercase" style="padding:10px 25px; font-size:2em;color:white;">热门歌曲分享平台</h5>
+                    <p style="padding:10px 25px;font-size:1.2em;color:white;">热门歌曲分享平台，你想听到的歌曲，都在这里！</p>
                 </div>
                 </div>
         </div>
@@ -83,20 +57,5 @@ function filterHostResult(ret) {
              {% endblock %}
             </div>
         </div>
-    <script>
-    $(function () {
-            $("input[name = 'username']").keydown(function (event) {
-                if (event.which == "13")
-                    $("input[name = 'password']").focus()
-            })
-            $("input[name = 'password']").keydown(function (event) {
-                if (event.which == "13")
-                    checkLogin();
-            })
-            $("input[name = 'submit']").click(function () {
-                checkLogin();
-            });
-        })
-    </script>
   </body>
 </html>
