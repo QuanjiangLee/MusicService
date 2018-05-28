@@ -141,7 +141,10 @@ def get_songs_liked(request):
     login_user=request.session.get('login_user',None)
     user = userInf.objects.get(user_name=login_user)
     items = []
-    like_songs = songLikes.objects.filter(like_user=user)
+    try:
+        like_songs = songLikes.objects.filter(like_user=user)
+    except Exception:
+        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items,'list_type':'liked', 'user_grant':user_grant})
     for like in like_songs:
         items.append([like.like_song,like])
     if user_grant == "user":

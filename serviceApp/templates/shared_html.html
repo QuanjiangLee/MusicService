@@ -18,7 +18,7 @@
             <tbody id='table-group'>
         <tr class="entry">
             <td class="song-main">
-                <a class="artist" href="http://{{ item.1.song_url }}" title="{{ item.1.song_name }}" target="_blank">{{ item.1.song_name }}</a>
+                <a class="artist" href="{{ item.1.song_url }}" title="{{ item.1.song_name }}" target="_blank">{{ item.1.song_name }}</a>
             </td>
             <td class="song-author">
                 <span>{{ item.1.song_author }}</span>
@@ -29,7 +29,7 @@
                 </a>
             </td>
             <td class="action" song-id="{{ item.1.song_id }}">
-                <a class="artist" href="http://{{ item.1.song_url }}" target="_blank">
+                <a class="artist" href="{{ item.1.song_url }}" target="_blank">
                     <button data-action="play" class="play" tit1e="试听">试听</button>
                 </a>
                 <button data-action="like" class="like" title="收藏" onclick="song_liked(this)">收藏</button>

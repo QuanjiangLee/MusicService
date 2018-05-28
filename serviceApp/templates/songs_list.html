@@ -25,7 +25,7 @@
     </td>
     {% endif %}
     <td class="song-main">
-                    <a class="artist" href="http://{{ item.0.song_url }}" title="{{ item.0.song_name }}" target="_blank">{{ item.0.song_name }}</a>
+                    <a class="artist" href="{{ item.0.song_url }}" title="{{ item.0.song_name }}" target="_blank">{{ item.0.song_name }}</a>
     </td>
     <td class="song-author">
         <span>{{ item.0.song_author }}</span>
@@ -41,7 +41,7 @@
     </td>
      {% endif %}
     <td class="action" song-id = "{{ item.0.song_id }}">
-            <a class="artist" href="http://{{ item.0.song_url }}"  target="_blank">
+            <a class="artist" href="{{ item.0.song_url }}"  target="_blank">
             <button data-action="play" class="play" title="试听">试听</button></a>
             {% if user_grant == "custom" %}
             <button data-action="like" class="like" title="收藏" onclick="userLogin()">收藏</button>
