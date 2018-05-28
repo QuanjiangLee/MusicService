@@ -129,8 +129,16 @@ function song_lyric(elem) {
 function lyricResult(ret) {
     if (ret) {
         var title = ret['song_name'] + " 的歌词"
-        var html = "<p>"+ret['song_lyric']+"</p>"
+        console.log(ret['song_lyric'])
+        lyric_list = ret['song_lyric'].split("\r\n")
+        var html=""
+        for(var i=0; i<lyric_list.length;i++){
+            html += "<p>"+lyric_list[i]+"</p>"
+        }
         dialogAlert(title, html);
+        $(".bootstrap-dialog-message").css("height", "500px");
+        $(".bootstrap-dialog-message").css("overflow-y", "scroll");
+        $(".modal-body").css("background-color", "rgba(0, 0, 0, 0.12)");
     } else {
         alert("歌词获取错误，请稍候重试！");
     }
@@ -167,7 +175,7 @@ function song_share(elem) {
     var title = "分享歌曲给其他人"
     dialogAlert(title, html);
     $(".bootstrap-dialog-message").css("height", "500px");
-    $(".bootstrap-dialog-message").css("overflow", "scroll");
+    $(".bootstrap-dialog-message").css("overflow-y", "scroll");
     $(".bootstrap-dialog-message").css("text-align", "left");
 }
 
@@ -240,7 +248,7 @@ function song_commits(elem) {
     var title = "歌曲评论"
     dialogAlert(title, html);
     $(".bootstrap-dialog-message").css("height", "500px");
-    $(".bootstrap-dialog-message").css("overflow", "scroll");
+    $(".bootstrap-dialog-message-y").css("overflow", "scroll");
     $(".bootstrap-dialog-message").css("text-align", "left");
 }
 

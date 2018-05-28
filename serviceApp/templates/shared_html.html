@@ -1,6 +1,7 @@
 {% extends extend %} 
 {% block content %}
 <div style="margin:25px 50px;padding:5px;width:100%;">
+{% if items %}
 {% for item in items %}
 <div class="panel panel-info" style="padding:0px;" >
     <div class="panel-heading">
@@ -48,6 +49,9 @@
     </div>
 </div>
 {% endfor %}
+{% else %}
+<div style="width: 100%;text-align: center;margin-top: 100px;font-size: 1.2em;"><span>暂时还没有人给您分享歌曲哦～！</span></div>
+{% endif %}
 </div>
 <style>
    td {
