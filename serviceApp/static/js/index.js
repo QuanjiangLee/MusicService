@@ -130,7 +130,7 @@ function lyricResult(ret) {
     if (ret) {
         var title = ret['song_name'] + " 的歌词"
         console.log(ret['song_lyric'])
-        lyric_list = ret['song_lyric'].split("\r\n")
+        lyric_list = ret['song_lyric'].split("\n")
         var html=""
         for(var i=0; i<lyric_list.length;i++){
             html += "<p>"+lyric_list[i]+"</p>"

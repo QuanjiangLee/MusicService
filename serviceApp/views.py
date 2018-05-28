@@ -275,7 +275,7 @@ def song_lyric(request):
         song_id = data['song_id']
         ret = songsInf.objects.filter(song_id=song_id)
         if ret:
-            print(ret[0].song_lyric)
+            #print(ret[0].song_lyric)
             return HttpResponse(json.dumps({'song_name':ret[0].song_name, 'song_lyric':ret[0].song_lyric}), content_type='application/json;c:harset=utf-8')
         else:
             return HttpResponse(json.dumps(False), content_type='application/json;charset=utf-8')
