@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^index/home/$', views.index_home),
     url(r'^userIndex/home/$', views.home),
     url(r'^index/songs_list/$', views.songs_list),
+    url(r'^index/filterSongs/$', views.filterSongs),
     url(r'^userIndex/songs_list/$', views.songs_list),
     url(r'^userIndex/get_songs_liked/$', views.get_songs_liked),
     url(r'^userIndex/get_songs_shared/$', views.get_songs_shared),

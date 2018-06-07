@@ -135,6 +135,23 @@ def songs_list(request):
     else:
         return redirect('/index/home/')
 
+
+def filterSongs(request):
+    user_grant = get_user_grant(request)
+    if request.method == "GET":
+        keyWords = request.GET.get('keyWords','')
+    print(user_grant)
+    items = []
+    songs = songsInf.objects.filter(song_name__icontains=keyWords)
+    for song in songs:
+        items.append([song])
+    if user_grant == "custom":
+        return render(request, 'songs_list.html',{'extend': 'index.html','items':items,'list_type':'all','user_grant':user_grant})
+    elif user_grant == "user":
+        return render(request, 'songs_list.html',{'extend': 'userIndex.html','items':items,'list_type':'all', 'user_grant':user_grant})
+    else:
+        return redirect('/index/home/')
+
 #获取收藏歌曲列表信息
 def get_songs_liked(request):
     user_grant = get_user_grant(request)
