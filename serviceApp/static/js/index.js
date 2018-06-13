@@ -248,7 +248,7 @@ function song_commits(elem) {
     var title = "歌曲评论"
     dialogAlert(title, html);
     $(".bootstrap-dialog-message").css("height", "500px");
-    $(".bootstrap-dialog-message-y").css("overflow", "scroll");
+    $(".bootstrap-dialog-message").css("overflow-y", "scroll");
     $(".bootstrap-dialog-message").css("text-align", "left");
 }
 
